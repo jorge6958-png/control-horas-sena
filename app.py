@@ -63,11 +63,11 @@ else:
     st.error("Carga un reporte XLS/CSV.")
     st.stop()
 
-    df_detalle = asignar_competencias(df_detalle, df_pdf)
-    df_comp = construir_tabla_competencias(df_detalle, df_pdf)
-    df_instr = construir_tabla_instructores(df_detalle)
+df_detalle = asignar_competencias(df_detalle, df_pdf)
+df_comp = construir_tabla_competencias(df_detalle, df_pdf)
+df_instr = construir_tabla_instructores(df_detalle)
 
-    # ─── INFO DE LA FICHA ────────────────────────────────────
+# ─── INFO DE LA FICHA ────────────────────────────────────
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric("Código Ficha", info_ficha.get("Código Ficha", "—"))
