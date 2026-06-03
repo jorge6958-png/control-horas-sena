@@ -311,7 +311,10 @@ def construir_tabla_competencias(df_detalle, df_pdf):
         df_rep = coincidentes.groupby("competencia_normalizada").agg(
             horas_reportadas=("horas", "sum"),
         ).reset_index()
-        df_rep.columns = ["competencia", "horas_reportadas"]
+        if not df_rep.empty:
+            df_rep.columns = ["competencia", "horas_reportadas"]
+        else:
+            df_rep = pd.DataFrame(columns=["competencia", "horas_reportadas"])
 
         instr_estados = coincidentes.groupby("competencia_normalizada").apply(
             lambda g: "; ".join(
@@ -320,7 +323,10 @@ def construir_tabla_competencias(df_detalle, df_pdf):
             ),
             include_groups=False,
         ).reset_index()
-        instr_estados.columns = ["competencia", "instructores_detalle"]
+        if not instr_estados.empty:
+            instr_estados.columns = ["competencia", "instructores_detalle"]
+        else:
+            instr_estados = pd.DataFrame(columns=["competencia", "instructores_detalle"])
     else:
         df_rep = pd.DataFrame(columns=["competencia", "horas_reportadas"])
         instr_estados = pd.DataFrame(columns=["competencia", "instructores_detalle"])
