@@ -57,7 +57,7 @@ if xls_file:
     xls_path = os.path.join("/tmp", xls_file.name)
     with open(xls_path, "wb") as f:
         f.write(xls_file.getbuffer())
-        df_detalle, info_ficha = procesar_reporte(xls_path)
+    df_detalle, info_ficha = procesar_reporte(xls_path)
     st.sidebar.success(f"✅ Reporte cargado: {xls_file.name}")
 else:
     st.error("Carga un reporte XLS/CSV.")
