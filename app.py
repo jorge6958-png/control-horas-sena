@@ -72,9 +72,9 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Código Ficha", info_ficha.get("Código Ficha", "—"))
 with col2:
-    st.metric("Programa", info_ficha.get("Nombre Programa", "—")[:50])
+    st.metric("Programa", info_ficha.get("Nombre Programa", "—"))
 with col3:
-    st.metric("Centro", info_ficha.get("Centro", "—")[:35])
+    st.metric("Centro", info_ficha.get("Centro", "—"))
 with col4:
     st.metric("Municipio", info_ficha.get("Municipio", "—"))
 

@@ -155,7 +155,10 @@ def procesar_reporte(ruta_archivo):
         info_ficha = {}
         for i in range(1, min(8, sheet.nrows)):
             label = str(sheet.cell_value(i, 0)).strip()
-            valor = str(sheet.cell_value(i, 1)).strip() if sheet.ncols > 1 else ""
+            raw = sheet.cell_value(i, 1) if sheet.ncols > 1 else ""
+            if isinstance(raw, float) and raw == int(raw):
+                raw = int(raw)
+            valor = str(raw).strip()
             if label and valor:
                 info_ficha[label] = valor
 
@@ -196,7 +199,10 @@ def procesar_reporte(ruta_archivo):
         info_ficha = {}
         for i in range(1, min(8, ws.max_row + 1)):
             c0 = str(ws.cell(i, 1).value or "").strip()
-            c1 = str(ws.cell(i, 2).value or "").strip()
+            raw = ws.cell(i, 2).value
+            if isinstance(raw, float) and raw == int(raw):
+                raw = int(raw)
+            c1 = str(raw or "").strip()
             if c0 and c1:
                 info_ficha[c0] = c1
 
