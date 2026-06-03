@@ -3,7 +3,7 @@ import re
 import pandas as pd
 import streamlit as st
 
-RUTA_PDF_DEFAULT = "/home/jorge/TG en Implementacion de Infraestructura de TICs - 228116.pdf"
+RUTA_PDF_DEFAULT = os.path.join(os.path.dirname(__file__), "TG en Implementacion de Infraestructura de TICs - 228116.pdf")
 
 CORRECCIONES_PDF = {
     "ELABORA LA PROPUESTA T\u00c9CNICA DE SERVICIOS DE LA INFRAESTRUCTURA DE":
