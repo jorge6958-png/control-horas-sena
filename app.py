@@ -81,45 +81,28 @@ with col4:
 st.markdown("---")
 
 # ─── INDICADOR GENERAL ────────────────────────────────────
-total_plan = df_comp["horas_planeadas"].sum()
-total_rep = df_comp["horas_reportadas"].sum()
-total_sin_etapa = df_comp[
+df_comp_lectiva = df_comp[
     ~df_comp["competencia"].str.contains("ETAPA PRÁCTICA", case=False)
 ]
-plan_sin_etapa = total_sin_etapa["horas_planeadas"].sum()
-rep_sin_etapa = total_sin_etapa["horas_reportadas"].sum()
-pct_sin_etapa = (rep_sin_etapa / plan_sin_etapa * 100) if plan_sin_etapa > 0 else 0
-pct_general = (total_rep / total_plan * 100) if total_plan > 0 else 0
+plan_total = df_comp_lectiva["horas_planeadas"].sum()
+rep_total = df_comp_lectiva["horas_reportadas"].sum()
+pct_ejecucion = (rep_total / plan_total * 100) if plan_total > 0 else 0
 
-col_a, col_b, col_c, col_d = st.columns(4)
-
-delta_pct = pct_sin_etapa - 100
+col_a, col_c, col_d = st.columns(3)
 with col_a:
     st.markdown(
         f"""
         <div style="text-align:center;padding:20px;background:#f0f2f6;border-radius:10px">
-            <h1 style="font-size:3em;margin:0">{pct_sin_etapa:.1f}%</h1>
-            <p style="font-size:0.9em;color:#555">Ejecución (sin Etapa Práctica)</p>
-            <p style="font-size:1.1em">{rep_sin_etapa:,}h / {plan_sin_etapa:,}h</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with col_b:
-    st.markdown(
-        f"""
-        <div style="text-align:center;padding:20px;background:#e8f5e9;border-radius:10px">
-            <h1 style="font-size:3em;margin:0;color:#2e7d32">{pct_general:.1f}%</h1>
-            <p style="font-size:0.9em;color:#555">Ejecución General</p>
-            <p style="font-size:1.1em">{total_rep:,}h / {total_plan:,}h</p>
+            <h1 style="font-size:3em;margin:0">{pct_ejecucion:.1f}%</h1>
+            <p style="font-size:0.9em;color:#555">Ejecución Lectiva</p>
+            <p style="font-size:1.1em">{rep_total:,}h / {plan_total:,}h</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
 with col_c:
-    faltantes = total_plan - total_rep
+    faltantes = plan_total - rep_total
     st.markdown(
         f"""
         <div style="text-align:center;padding:20px;background:#fff3e0;border-radius:10px">
@@ -148,7 +131,7 @@ st.markdown("---")
 # ─── TABLA POR COMPETENCIA ────────────────────────────────
 st.subheader("📋 Horas por competencia")
 
-df_display = df_comp.copy()
+df_display = df_comp_lectiva.copy()
 df_display["competencia"] = df_display["nombre_limpio"]
 df_display["planeadas"] = df_display["horas_planeadas"].astype(int)
 df_display["reportadas"] = df_display["horas_reportadas"].astype(int)
@@ -221,9 +204,9 @@ st.plotly_chart(fig, use_container_width=True)
 # ─── GRÁFICO DE PASTEL: Ejecución general ─────────────────
 st.subheader("🎯 Distribución de ejecución")
 
-completas = len(df_comp[df_comp["porcentaje"] >= 100])
-incompletas = len(df_comp[(df_comp["porcentaje"] > 0) & (df_comp["porcentaje"] < 100)])
-sin_reporte = len(df_comp[df_comp["porcentaje"] == 0])
+completas = len(df_comp_lectiva[df_comp_lectiva["porcentaje"] >= 100])
+incompletas = len(df_comp_lectiva[(df_comp_lectiva["porcentaje"] > 0) & (df_comp_lectiva["porcentaje"] < 100)])
+sin_reporte = len(df_comp_lectiva[df_comp_lectiva["porcentaje"] == 0])
 
 fig_pie = go.Figure(data=[go.Pie(
     labels=["Completas (≥100%)", "Incompletas (>0%)", "Sin reporte (0%)"],
@@ -263,8 +246,8 @@ st.subheader("⚠️ Alertas")
 
 alertas = []
 
-competencias_incompletas = df_comp[
-    (df_comp["porcentaje"] > 0) & (df_comp["porcentaje"] < 100)
+competencias_incompletas = df_comp_lectiva[
+    (df_comp_lectiva["porcentaje"] > 0) & (df_comp_lectiva["porcentaje"] < 100)
 ]
 for _, row in competencias_incompletas.iterrows():
     faltan = int(row["horas_planeadas"] - row["horas_reportadas"])
@@ -299,6 +282,6 @@ else:
 st.markdown("---")
 st.caption(
     f"📊 Reporte procesado: {xls_file.name} | "
-    f"{len(df_comp)} competencias, "
+    f"{len(df_comp_lectiva)} competencias, "
     f"{total_instructores} instructores"
 )
