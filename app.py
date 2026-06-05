@@ -67,15 +67,19 @@ st.sidebar.success(f"✅ Programa: {programa}")
 st.sidebar.success(f"✅ Reporte: {xls_file.name}")
 
 # ─── INFO DE LA FICHA ────────────────────────────────────
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric("Código Ficha", info_ficha.get("Código Ficha", "—"))
-with col2:
-    st.metric("Programa", info_ficha.get("Nombre Programa", programa))
-with col3:
-    st.metric("Centro", info_ficha.get("Centro", "—"))
-with col4:
-    st.metric("Municipio", info_ficha.get("Municipio", "—"))
+ficha_info = [
+    ("Código Ficha", info_ficha.get("Código Ficha", "—")),
+    ("Programa", info_ficha.get("Nombre Programa", programa)),
+    ("Centro", info_ficha.get("Centro", "—")),
+    ("Municipio", info_ficha.get("Municipio", "—")),
+]
+cols = st.columns(4)
+for col, (label, value) in zip(cols, ficha_info):
+    col.markdown(
+        f"<p style='margin:0;font-size:0.75em;color:#555'>{label}</p>"
+        f"<p style='margin:0;font-size:0.95em;font-weight:600;word-break:break-word'>{value}</p>",
+        unsafe_allow_html=True,
+    )
 
 st.markdown("---")
 
