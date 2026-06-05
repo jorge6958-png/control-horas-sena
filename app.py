@@ -84,7 +84,7 @@ st.markdown("---")
 
 # ─── INDICADOR GENERAL ────────────────────────────────────
 df_comp_lectiva = df_comp[
-    ~df_comp["nombre"].str.contains("ETAPA PRÁCTICA", case=False)
+    ~df_comp["nombre"].str.contains(r"ETAPA\s*PR[AÁ]CTICA", case=False, regex=True)
 ]
 plan_total = df_comp_lectiva["horas_planeadas"].sum()
 rep_total = df_comp_lectiva["horas_reportadas"].sum()
@@ -94,10 +94,10 @@ col_a, col_c, col_d = st.columns(3)
 with col_a:
     st.markdown(
         f"""
-        <div style="text-align:center;padding:20px;background:#f0f2f6;border-radius:10px">
+        <div style="text-align:center;padding:20px;background:rgba(128,128,128,0.08);border-radius:10px">
             <h1 style="font-size:3em;margin:0">{pct_ejecucion:.1f}%</h1>
-            <p style="font-size:0.9em;color:#555">Ejecución Lectiva</p>
-            <p style="font-size:1.1em">{rep_total:,}h / {plan_total:,}h</p>
+            <p style="font-size:0.9em;opacity:0.6">Ejecución Lectiva</p>
+            <p style="font-size:1.1em;opacity:0.8">{rep_total:,}h / {plan_total:,}h</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -107,9 +107,9 @@ with col_c:
     faltantes = plan_total - rep_total
     st.markdown(
         f"""
-        <div style="text-align:center;padding:20px;background:#fff3e0;border-radius:10px">
+        <div style="text-align:center;padding:20px;background:rgba(230,81,0,0.1);border-radius:10px">
             <h1 style="font-size:2.5em;margin:0;color:#e65100">{faltantes:,}h</h1>
-            <p style="font-size:0.9em;color:#555">Horas pendientes</p>
+            <p style="font-size:0.9em;opacity:0.6">Horas pendientes</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -120,9 +120,9 @@ with col_d:
     activos = df_instr[df_instr["estado"] == "Activo"]["instructor"].nunique() if not df_instr.empty else 0
     st.markdown(
         f"""
-        <div style="text-align:center;padding:20px;background:#e3f2fd;border-radius:10px">
+        <div style="text-align:center;padding:20px;background:rgba(21,101,192,0.1);border-radius:10px">
             <h1 style="font-size:2.5em;margin:0;color:#1565c0">{total_instructores}</h1>
-            <p style="font-size:0.9em;color:#555">Instructores ({activos} activos)</p>
+            <p style="font-size:0.9em;opacity:0.6">Instructores ({activos} activos)</p>
         </div>
         """,
         unsafe_allow_html=True,
