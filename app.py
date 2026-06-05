@@ -70,10 +70,9 @@ st.sidebar.success(f"✅ Reporte: {xls_file.name}")
 ficha_info = [
     ("Código Ficha", info_ficha.get("Código Ficha", "—")),
     ("Programa", info_ficha.get("Nombre Programa", programa)),
-    ("Centro", info_ficha.get("Centro", "—")),
     ("Municipio", info_ficha.get("Municipio", "—")),
 ]
-cols = st.columns(4)
+cols = st.columns(3)
 for col, (label, value) in zip(cols, ficha_info):
     col.markdown(
         f"<p style='margin:0;font-size:0.75em;color:#555'>{label}</p>"
