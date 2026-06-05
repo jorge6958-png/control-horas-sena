@@ -140,7 +140,7 @@ df_display["reportadas"] = df_display["horas_reportadas"].astype(int)
 df_display["diferencia"] = df_display["diferencia"].astype(int)
 df_display["% ejec."] = df_display["porcentaje"].apply(lambda x: f"{x:.1f}%")
 df_display["Estado"] = df_display["porcentaje"].apply(
-    lambda x: "✅ Completa" if x >= 100 else ("⚠️ Incompleta" if x > 0 else "🔴 Sin reporte")
+    lambda x: "🔵 Sobre ejecutada" if x > 100 else ("✅ Completa" if x == 100 else ("⚠️ Incompleta" if x > 0 else "🔴 Sin reporte"))
 )
 
 tabla_comp = df_display[[
@@ -206,14 +206,15 @@ st.plotly_chart(fig, use_container_width=True)
 # ─── GRÁFICO DE PASTEL: Ejecución general ─────────────────
 st.subheader("🎯 Distribución de ejecución")
 
-completas = len(df_comp_lectiva[df_comp_lectiva["porcentaje"] >= 100])
+completas = len(df_comp_lectiva[df_comp_lectiva["porcentaje"] == 100])
+sobreejecutadas = len(df_comp_lectiva[df_comp_lectiva["porcentaje"] > 100])
 incompletas = len(df_comp_lectiva[(df_comp_lectiva["porcentaje"] > 0) & (df_comp_lectiva["porcentaje"] < 100)])
 sin_reporte = len(df_comp_lectiva[df_comp_lectiva["porcentaje"] == 0])
 
 fig_pie = go.Figure(data=[go.Pie(
-    labels=["Completas (≥100%)", "Incompletas (>0%)", "Sin reporte (0%)"],
-    values=[completas, incompletas, sin_reporte],
-    marker_colors=["#2e7d32", "#e65100", "#bdbdbd"],
+    labels=["✅ Completas (=100%)", "🔵 Sobre ejecutadas (>100%)", "⚠️ Incompletas (>0%)", "🔴 Sin reporte (0%)"],
+    values=[completas, sobreejecutadas, incompletas, sin_reporte],
+    marker_colors=["#2e7d32", "#1565c0", "#e65100", "#bdbdbd"],
     textinfo="label+percent",
 )])
 fig_pie.update_layout(height=350, margin=dict(l=0, r=0, t=10, b=0))
@@ -258,8 +259,18 @@ for _, row in competencias_incompletas.iterrows():
         f"{row['porcentaje']:.1f}% ejecutado, faltan {faltan}h"
     )
 
+competencias_sobreejecutadas = df_comp_lectiva[
+    df_comp_lectiva["porcentaje"] > 100
+]
+for _, row in competencias_sobreejecutadas.iterrows():
+    extra = int(row["horas_reportadas"] - row["horas_planeadas"])
+    alertas.append(
+        f"**{row['nombre_limpio']}** — "
+        f"{row['porcentaje']:.1f}% ejecutado, **{extra}h sobre ejecutadas** 🔵"
+    )
+
 competencias_sin_reporte = df_comp[
-    (df_comp["porcentaje"] == 0) & (~df_comp["nombre"].str.contains("ETAPA PRÁCTICA", case=False))
+    (df_comp["porcentaje"] == 0) & (~df_comp["nombre"].str.contains(r"ETAPA\s*PR[AÁ]CTICA", case=False, regex=True))
 ]
 for _, row in competencias_sin_reporte.iterrows():
     alertas.append(
