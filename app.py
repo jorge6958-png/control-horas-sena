@@ -75,8 +75,8 @@ ficha_info = [
 cols = st.columns(3)
 for col, (label, value) in zip(cols, ficha_info):
     col.markdown(
-        f"<p style='margin:0;font-size:0.75em;color:#555'>{label}</p>"
-        f"<p style='margin:0;font-size:0.95em;font-weight:600;word-break:break-word'>{value}</p>",
+        f"<p style='margin:0;font-size:0.85em;color:#555'>{label}</p>"
+        f"<p style='margin:0;font-size:1.15em;font-weight:600;overflow-wrap:break-word;word-wrap:break-word'>{value}</p>",
         unsafe_allow_html=True,
     )
 
