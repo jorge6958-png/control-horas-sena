@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from utils import (
-    cargar_competencias, listar_programas,
+    cargar_competencias, detectar_programa,
     procesar_reporte, asignar_competencias,
     construir_tabla_competencias, construir_tabla_instructores
 )
@@ -19,15 +19,6 @@ st.markdown("---")
 
 # ─── SIDEBAR ───────────────────────────────────────────────
 with st.sidebar:
-    st.header("⚙️ Configuración")
-
-    programa = st.selectbox(
-        "Programa de Formación",
-        options=listar_programas(),
-        index=0,
-    )
-
-    st.markdown("---")
     st.subheader("📂 Cargar archivos")
 
     xls_file = st.file_uploader(
@@ -40,8 +31,7 @@ with st.sidebar:
 # ─── VALIDACIÓN ────────────────────────────────────────────
 if not procesar:
     st.info(
-        "\U0001f448 Selecciona un programa y carga el reporte de instructores, "
-        "luego haz clic en **Procesar**."
+        "Carga el reporte de instructores y haz clic en **Procesar**."
     )
     st.stop()
 
@@ -49,20 +39,31 @@ if not xls_file:
     st.error("Carga el reporte de instructores.")
     st.stop()
 
-# ─── CARGA DE COMPETENCIAS ────────────────────────────────
-df_competencias = cargar_competencias(programa)
-st.sidebar.success(f"✅ Programa: {programa}")
-
 # ─── PROCESAR REPORTE ─────────────────────────────────────
 with st.spinner("Procesando reporte de instructores..."):
     xls_path = os.path.join("/tmp", xls_file.name)
     with open(xls_path, "wb") as f:
         f.write(xls_file.getbuffer())
     df_detalle, info_ficha = procesar_reporte(xls_path)
+
+if "Nombre Programa" not in info_ficha or not info_ficha["Nombre Programa"]:
+    st.error("El reporte no contiene el nombre del programa.")
+    st.stop()
+
+try:
+    programa = detectar_programa(info_ficha["Nombre Programa"])
+except ValueError as e:
+    st.error(str(e))
+    st.stop()
+
+df_competencias = cargar_competencias(programa)
+
+with st.spinner("Procesando reporte de instructores..."):
     df_detalle = asignar_competencias(df_detalle, df_competencias)
     df_comp = construir_tabla_competencias(df_detalle, df_competencias)
     df_instr = construir_tabla_instructores(df_detalle)
 
+st.sidebar.success(f"✅ Programa: {programa}")
 st.sidebar.success(f"✅ Reporte: {xls_file.name}")
 
 # ─── INFO DE LA FICHA ────────────────────────────────────

@@ -24,6 +24,45 @@ def listar_programas():
     return list(data["programas"].keys())
 
 
+def _normalizar(texto):
+    return " ".join(texto.lower().strip().rstrip(".").split())
+
+
+def detectar_programa(programa_str):
+    with open(RUTA_JSON, encoding="utf-8") as f:
+        data = json.load(f)
+    programas = data["programas"]
+    norm_str = _normalizar(programa_str)
+
+    for key, prog in programas.items():
+        ref = prog.get("nombre_reporte", key)
+        if _normalizar(ref) == norm_str:
+            return key
+
+    for key, prog in programas.items():
+        ref = prog.get("nombre_reporte", key)
+        ref_norm = _normalizar(ref)
+        if ref_norm in norm_str or norm_str in ref_norm:
+            return key
+
+    best_key = None
+    best_score = 0
+    for key, prog in programas.items():
+        ref = prog.get("nombre_reporte", key)
+        s = fuzz.partial_ratio(norm_str, _normalizar(ref))
+        if s > best_score:
+            best_score = s
+            best_key = key
+
+    if best_key and best_score >= 82:
+        return best_key
+
+    raise ValueError(
+        f"No se pudo determinar el programa desde el reporte: '{programa_str}'. "
+        f"Programas disponibles: {', '.join(programas.keys())}"
+    )
+
+
 def match_competencia_fuzzy(texto, lista_ref, threshold=82):
     texto_clean = " ".join(texto.lower().split())
     best_match = None

@@ -2,6 +2,7 @@
   "programas": {
     "Gestión de Redes de Datos": {
       "codigo": "228183",
+      "nombre_reporte": "GESTION DE REDES DE DATOS",
       "competencias": [
         {
           "codigo": "2",
@@ -121,6 +122,7 @@
     },
     "Implementación de Infraestructura de TICs": {
       "codigo": "228116",
+      "nombre_reporte": "IMPLEMENTACION DE INFRAESTRUCTURA DE TECNOLOGIAS DE LA INFORMACION Y LAS COMUNICACIONES.",
       "competencias": [
         {
           "codigo": "2",
