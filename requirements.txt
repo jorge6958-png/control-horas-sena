@@ -1,6 +1,6 @@
 streamlit
 pandas
 plotly
-pdfplumber
 xlrd
 openpyxl
+rapidfuzz

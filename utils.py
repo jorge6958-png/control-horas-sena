@@ -1,147 +1,80 @@
 import os
+import json
 import re
 import pandas as pd
 import streamlit as st
+from rapidfuzz import fuzz
 
-RUTA_PDF_DEFAULT = os.path.join(os.path.dirname(__file__), "Diseno_curricular GESTION DE REDES.pdf")
-
-CORRECCIONES_PDF = {}
-
-COMPETENCIAS_ADICIONALES = [
-    ("ETAPA PR\u00c1CTICA", 864),
-]
-
-NORMALIZACION_COMPETENCIAS = [
-    ("administrar hardware y software de seguridad en la red",
-     "ADMINISTRACI\u00d3N DE HARDWARE Y SOFTWARE DE SEGURIDAD EN LA RED."),
-    ("aplicaci\u00f3n de conocimientos de las ciencias naturales",
-     "APLICACI\u00d3N DE CONOCIMIENTOS DE LAS CIENCIAS NATURALES DE ACUERDO CON"),
-    ("aplicar pr\u00e1cticas de protecci\u00f3n ambiental, seguridad y salud en el trabajo",
-     "APLICAR PR\u00c1CTICAS DE PROTECCI\u00d3N AMBIENTAL, SEGURIDAD Y SALUD EN EL TRABAJO"),
-    ("administrar infraestructura tecnol\u00f3gica de red",
-     "GESTI\u00d3N DE LA INFRAESTRUCTURA TECNOL\u00d3GICA DE RED."),
-    ("configurar dispositivos de c\u00f3mputo",
-     "CONFIGURACI\u00d3N DE EQUIPOS DE C\u00d3MPUTO."),
-    ("configurar dispositivos activos de interconexi\u00f3n",
-     "CONFIGURACI\u00d3N DE DISPOSITIVOS ACTIVOS DE INTERCONEXI\u00d3N."),
-    ("desarrollar procesos de comunicaci\u00f3n eficaces y efectivos",
-     "FORMA EFICAZ Y EFECTIVA, TENIENDO EN CUENTA SITUACIONES DE"),
-    ("ejercer derechos fundamentales del trabajo",
-     "Ejercer derechos fundamentales del trabajo en el marco de la constituci\u00f3n pol\u00edtica y los convenios"),
-    ("enrique low murtra-interactuar en el contexto productivo y social",
-     "INTERACTUAR EN EL CONTEXTO PRODUCTIVO Y SOCIAL DE ACUERDO CON PRINCIPIOS"),
-    ("generar h\u00e1bitos saludables",
-     "IMPLEMENTAR H\u00c1BITOS SALUDABLES MEDIANTE LA ACTIVIDAD F\u00cdSICA, DE"),
-    ("cultura emprendedora y empresarial",
-     "EMPLEAR ELEMENTOS DE CULTURA EMPRENDEDORA Y EMPRESARIAL DE"),
-    ("interactuar en lengua inglesa",
-     "SOCIALES Y LABORALES SEG\u00daN LOS CRITERIOS ESTABLECIDOS POR EL MARCO COM\u00daN"),
-    ("implementar red inal\u00e1mbrica local",
-     "IMPLEMENTACI\u00d3N DE LA RED INAL\u00c1MBRICA LOCAL."),
-    ("implementar tecnolog\u00edas de voz sobre ip",
-     "IMPLEMENTACI\u00d3N DE TECNOLOG\u00cdAS DE VOZ SOBRE IP."),
-    ("orientar investigaci\u00f3n formativa seg\u00fan referentes t\u00e9cnicos",
-     "DESARROLLO DE PROCESOS DE INVESTIGACI\u00d3N EFECTIVOS, TENIENDO EN"),
-    ("razonar cuantitativamente frente a situaciones susceptibles",
-     "RAZONAR CUANTITATIVAMENTE FRENTE A SITUACIONES SUSCEPTIBLES DE SER"),
-    ("resultado de aprendizaje de la inducci\u00f3n",
-     "RESULTADO DE APRENDIZAJE DE LA INDUCCI\u00d3N."),
-    ("utilizar herramientas inform\u00e1ticas",
-     "APLICACI\u00d3N DE TECNOLOG\u00cdAS DE LA INFORMACI\u00d3N Y LA COMUNICACI\u00d3N"),
-]
-
-NOMBRES_LIMPIEZA = {
-    "ADMINISTRACI\u00d3N DE HARDWARE Y SOFTWARE DE SEGURIDAD EN LA RED.": "Seguridad en la red",
-    "APLICACI\u00d3N DE CONOCIMIENTOS DE LAS CIENCIAS NATURALES DE ACUERDO CON": "Ciencias naturales",
-    "APLICAR PR\u00c1CTICAS DE PROTECCI\u00d3N AMBIENTAL, SEGURIDAD Y SALUD EN EL TRABAJO": "Protecci\u00f3n salud y ambiente",
-    "GESTI\u00d3N DE LA INFRAESTRUCTURA TECNOL\u00d3GICA DE RED.": "Gesti\u00f3n infraestructura de red",
-    "CONFIGURACI\u00d3N DE EQUIPOS DE C\u00d3MPUTO.": "Configuraci\u00f3n equipos de c\u00f3mputo",
-    "CONFIGURACI\u00d3N DE DISPOSITIVOS ACTIVOS DE INTERCONEXI\u00d3N.": "Configuraci\u00f3n dispositivos activos",
-    "FORMA EFICAZ Y EFECTIVA, TENIENDO EN CUENTA SITUACIONES DE": "Comunicaci\u00f3n",
-    "Ejercer derechos fundamentales del trabajo en el marco de la constituci\u00f3n pol\u00edtica y los convenios": "Derechos fundamentales",
-    "INTERACTUAR EN EL CONTEXTO PRODUCTIVO Y SOCIAL DE ACUERDO CON PRINCIPIOS": "\u00c9tica / Cultura de paz",
-    "IMPLEMENTAR H\u00c1BITOS SALUDABLES MEDIANTE LA ACTIVIDAD F\u00cdSICA, DE": "Actividad f\u00edsica",
-    "EMPLEAR ELEMENTOS DE CULTURA EMPRENDEDORA Y EMPRESARIAL DE": "Cultura emprendedora",
-    "SOCIALES Y LABORALES SEG\u00daN LOS CRITERIOS ESTABLECIDOS POR EL MARCO COM\u00daN": "Ingl\u00e9s",
-    "IMPLEMENTACI\u00d3N DE LA RED INAL\u00c1MBRICA LOCAL.": "Red inal\u00e1mbrica local",
-    "IMPLEMENTACI\u00d3N DE TECNOLOG\u00cdAS DE VOZ SOBRE IP.": "Voz sobre IP",
-    "DESARROLLO DE PROCESOS DE INVESTIGACI\u00d3N EFECTIVOS, TENIENDO EN": "Investigaci\u00f3n",
-    "RAZONAR CUANTITATIVAMENTE FRENTE A SITUACIONES SUSCEPTIBLES DE SER": "Matem\u00e1ticas",
-    "RESULTADO DE APRENDIZAJE DE LA INDUCCI\u00d3N.": "Inducci\u00f3n",
-    "APLICACI\u00d3N DE TECNOLOG\u00cdAS DE LA INFORMACI\u00d3N Y LA COMUNICACI\u00d3N": "TIC",
-    "ETAPA PR\u00c1CTICA": "Etapa Pr\u00e1ctica",
-}
+RUTA_JSON = os.path.join(os.path.dirname(__file__), "competencias.json")
 
 
-def parsear_pdf(ruta_pdf):
-    import pdfplumber
-
-    with pdfplumber.open(ruta_pdf) as pdf:
-        text = ""
-        for page in pdf.pages:
-            t = page.extract_text()
-            if t:
-                text += t + "\n"
-
-    lines = text.split("\n")
-
-    competencies = []
-    i = 0
-    while i < len(lines):
-        line = lines[i].strip()
-
-        if "4.3 NOMBRE DE LA" in line:
-            rest = line[line.index("4.3 NOMBRE DE LA") + len("4.3 NOMBRE DE LA"):].strip()
-            name_parts = []
-
-            if rest and "COMPETENCIA" not in rest.upper() and len(rest) > 3:
-                name_parts.append(rest)
-
-            j = i + 1
-            while j < len(lines):
-                lj = lines[j].strip()
-                if lj.upper().strip() == "COMPETENCIA":
-                    j += 1
-                    break
-                if re.match(r"4\.[1-5]", lj):
-                    break
-                if lj and not lj.upper().startswith("COMPETENCIA"):
-                    name_parts.append(lj)
-                j += 1
-
-            comp_name = " ".join(name_parts).strip()
-            comp_name = comp_name.replace("\ufffd", "").strip()
-
-            if comp_name in CORRECCIONES_PDF:
-                comp_name = CORRECCIONES_PDF[comp_name]
-
-            for k in range(j, min(j + 15, len(lines))):
-                lk = lines[k].strip()
-                if "4.4 DURACI\u00d3N M\u00c1XIMA" in lk:
-                    for offset in range(0, 4):
-                        if k + offset < len(lines):
-                            match = re.search(r"(\d+)\s*horas?", lines[k + offset].strip(), re.IGNORECASE)
-                            if match:
-                                hours = int(match.group(1))
-                                if comp_name and len(comp_name) >= 3:
-                                    competencies.append((comp_name, hours))
-                                break
-                    break
-
-            i = j
-
-        i += 1
-
-    for name, hours in COMPETENCIAS_ADICIONALES:
-        competencies.append((name, hours))
-
-    df = pd.DataFrame(
-        [
-            {"competencia": c[0].rstrip("."), "horas_planeadas": c[1]}
-            for c in competencies
-        ]
-    )
+def cargar_competencias(programa):
+    with open(RUTA_JSON, encoding="utf-8") as f:
+        data = json.load(f)
+    prog = data["programas"].get(programa)
+    if not prog:
+        raise ValueError(f"Programa no encontrado: {programa}")
+    df = pd.DataFrame(prog["competencias"])
     return df
+
+
+def listar_programas():
+    with open(RUTA_JSON, encoding="utf-8") as f:
+        data = json.load(f)
+    return list(data["programas"].keys())
+
+
+def match_competencia_fuzzy(texto, lista_ref, threshold=82):
+    texto_clean = " ".join(texto.lower().split())
+    best_match = None
+    best_score = 0
+    for ref in lista_ref:
+        ref_clean = " ".join(ref.lower().split())
+        score = fuzz.partial_ratio(ref_clean, texto_clean)
+        if score > best_score:
+            best_score = score
+            best_match = ref
+    return best_match if best_score >= threshold else None
+
+
+def asignar_competencias(df_detalle, df_competencias):
+    df_detalle = df_detalle.copy()
+    ref_nombres = list(df_competencias["nombre"])
+    ref_set = set(n.upper().strip() for n in ref_nombres)
+
+    df_detalle["competencia_normalizada"] = ""
+    df_detalle["coincide"] = False
+
+    for idx, row in df_detalle.iterrows():
+        xls = row["competencia_xls"]
+        xls_lower = " ".join(xls.lower().split())
+
+        # 1. Exact match
+        for ref_name in ref_nombres:
+            if xls_lower == " ".join(ref_name.lower().split()):
+                df_detalle.at[idx, "competencia_normalizada"] = ref_name
+                df_detalle.at[idx, "coincide"] = True
+                break
+        if df_detalle.at[idx, "coincide"]:
+            continue
+
+        # 2. Substring match
+        for ref_name in ref_nombres:
+            ref_lower = " ".join(ref_name.lower().split())
+            if ref_lower in xls_lower or xls_lower in ref_lower:
+                df_detalle.at[idx, "competencia_normalizada"] = ref_name
+                df_detalle.at[idx, "coincide"] = True
+                break
+        if df_detalle.at[idx, "coincide"]:
+            continue
+
+        # 3. Fuzzy match
+        fuzzy_match = match_competencia_fuzzy(xls, ref_nombres)
+        if fuzzy_match:
+            df_detalle.at[idx, "competencia_normalizada"] = fuzzy_match
+            df_detalle.at[idx, "coincide"] = True
+
+    return df_detalle
 
 
 def procesar_reporte(ruta_archivo):
@@ -284,37 +217,19 @@ def procesar_reporte(ruta_archivo):
     return df_detalle, info_ficha
 
 
-def normalizar_competencia(texto_xls):
-    texto_lower = texto_xls.lower().strip()
-    for patron, nombre_pdf in NORMALIZACION_COMPETENCIAS:
-        if patron in texto_lower:
-            return nombre_pdf
-    return ""
-
-
-def asignar_competencias(df_detalle, df_pdf):
-    df_detalle = df_detalle.copy()
-    competencias_pdf = set(df_pdf["competencia"].str.upper().str.strip())
-
-    df_detalle["competencia_normalizada"] = df_detalle["competencia_xls"].apply(normalizar_competencia)
-    df_detalle["coincide_pdf"] = df_detalle["competencia_normalizada"].str.upper().str.strip().isin(competencias_pdf)
-
-    return df_detalle
-
-
-def construir_tabla_competencias(df_detalle, df_pdf):
-    df_pdf = df_pdf.copy()
+def construir_tabla_competencias(df_detalle, df_competencias):
+    df_ref = df_competencias.copy()
 
     if not df_detalle.empty and "competencia_normalizada" in df_detalle.columns:
-        coincidentes = df_detalle[df_detalle["coincide_pdf"]]
+        coincidentes = df_detalle[df_detalle["coincide"]]
 
         df_rep = coincidentes.groupby("competencia_normalizada").agg(
             horas_reportadas=("horas", "sum"),
         ).reset_index()
         if not df_rep.empty:
-            df_rep.columns = ["competencia", "horas_reportadas"]
+            df_rep.columns = ["nombre", "horas_reportadas"]
         else:
-            df_rep = pd.DataFrame(columns=["competencia", "horas_reportadas"])
+            df_rep = pd.DataFrame(columns=["nombre", "horas_reportadas"])
 
         instr_estados = coincidentes.groupby("competencia_normalizada").apply(
             lambda g: "; ".join(
@@ -324,25 +239,25 @@ def construir_tabla_competencias(df_detalle, df_pdf):
             include_groups=False,
         ).reset_index()
         if not instr_estados.empty:
-            instr_estados.columns = ["competencia", "instructores_detalle"]
+            instr_estados.columns = ["nombre", "instructores_detalle"]
         else:
-            instr_estados = pd.DataFrame(columns=["competencia", "instructores_detalle"])
+            instr_estados = pd.DataFrame(columns=["nombre", "instructores_detalle"])
     else:
-        df_rep = pd.DataFrame(columns=["competencia", "horas_reportadas"])
-        instr_estados = pd.DataFrame(columns=["competencia", "instructores_detalle"])
+        df_rep = pd.DataFrame(columns=["nombre", "horas_reportadas"])
+        instr_estados = pd.DataFrame(columns=["nombre", "instructores_detalle"])
 
-    df_pdf["competencia_key"] = df_pdf["competencia"].str.upper().str.strip()
-    df_rep["competencia_key"] = df_rep["competencia"].str.upper().str.strip()
-    instr_estados["competencia_key"] = instr_estados["competencia"].str.upper().str.strip()
+    df_ref["key"] = df_ref["nombre"].str.upper().str.strip()
+    df_rep["key"] = df_rep["nombre"].str.upper().str.strip()
+    instr_estados["key"] = instr_estados["nombre"].str.upper().str.strip()
 
-    df_result = df_pdf.merge(
-        df_rep[["competencia_key", "horas_reportadas"]],
-        on="competencia_key",
+    df_result = df_ref.merge(
+        df_rep[["key", "horas_reportadas"]],
+        on="key",
         how="left",
     )
     df_result = df_result.merge(
-        instr_estados[["competencia_key", "instructores_detalle"]],
-        on="competencia_key",
+        instr_estados[["key", "instructores_detalle"]],
+        on="key",
         how="left",
     )
 
@@ -353,12 +268,7 @@ def construir_tabla_competencias(df_detalle, df_pdf):
     )
     df_result["instructores_detalle"] = df_result["instructores_detalle"].fillna("\u2014")
 
-    df_result["nombre_limpio"] = (
-        df_result["competencia"].map(NOMBRES_LIMPIEZA).fillna(df_result["competencia"])
-    )
-
     df_result = df_result.sort_values("horas_planeadas", ascending=False).reset_index(drop=True)
-
     return df_result
 
 

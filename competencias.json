@@ -1,0 +1,248 @@
+{
+  "programas": {
+    "Gestión de Redes de Datos": {
+      "codigo": "228183",
+      "competencias": [
+        {
+          "codigo": "2",
+          "nombre": "RESULTADOS DE APRENDIZAJE ETAPA PRACTICA",
+          "horas_planeadas": 864,
+          "nombre_limpio": "Etapa Práctica"
+        },
+        {
+          "codigo": "35848",
+          "nombre": "ADMINISTRAR HARDWARE Y SOFTWARE DE SEGURIDAD EN LA RED A PARTIR DE NORMAS INTERNACIONALES.",
+          "horas_planeadas": 528,
+          "nombre_limpio": "Seguridad en la red"
+        },
+        {
+          "codigo": "38499",
+          "nombre": "Administrar infraestructura tecnológica de red según modelos de referencia y procedimiento técnico",
+          "horas_planeadas": 384,
+          "nombre_limpio": "Gestión infraestructura de red"
+        },
+        {
+          "codigo": "38500",
+          "nombre": "CONFIGURAR DISPOSITIVOS DE CÓMPUTO DE ACUERDO CON ESPECIFICACIONES DEL DISEÑO Y PROTOCOLOS TÉCNICOS",
+          "horas_planeadas": 576,
+          "nombre_limpio": "Configuración equipos de cómputo"
+        },
+        {
+          "codigo": "38498",
+          "nombre": "Configurar dispositivos activos de interconexión según especificaciones del diseño y protocolos técnicos",
+          "horas_planeadas": 336,
+          "nombre_limpio": "Configuración dispositivos activos"
+        },
+        {
+          "codigo": "38147",
+          "nombre": "Implementar tecnologías de voz sobre IP de acuerdo con el diseño y normas técnicas",
+          "horas_planeadas": 288,
+          "nombre_limpio": "Voz sobre IP"
+        },
+        {
+          "codigo": "38501",
+          "nombre": "Implementar red inalámbrica local según especificaciones del diseño y estándares técnicos",
+          "horas_planeadas": 96,
+          "nombre_limpio": "Red inalámbrica local"
+        },
+        {
+          "codigo": "37714",
+          "nombre": "INTERACTUAR EN LENGUA INGLESA DE FORMA ORAL Y ESCRITA DENTRO DE CONTEXTOS SOCIALES Y LABORALES SEGÚN LOS CRITERIOS ESTABLECIDOS POR EL MARCO COMÚN EUROPEO DE REFERENCIA PARA LAS LENGUAS.",
+          "horas_planeadas": 384,
+          "nombre_limpio": "Inglés"
+        },
+        {
+          "codigo": "37799",
+          "nombre": "APLICAR PRÁCTICAS  DE PROTECCIÓN AMBIENTAL, SEGURIDAD Y SALUD EN EL TRABAJO DE ACUERDO CON LAS POLÍTICAS ORGANIZACIONALES  Y LA NORMATIVIDAD VIGENTE.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Protección salud y ambiente"
+        },
+        {
+          "codigo": "37801",
+          "nombre": "APLICACIÓN DE CONOCIMIENTOS DE LAS CIENCIAS NATURALES DE ACUERDO CON SITUACIONES DEL CONTEXTO PRODUCTIVO Y SOCIAL.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Ciencias naturales"
+        },
+        {
+          "codigo": "37800",
+          "nombre": "GENERAR HÁBITOS SALUDABLES DE VIDA MEDIANTE LA APLICACIÓN DE PROGRAMAS DE ACTIVIDAD FÍSICA EN LOS CONTEXTOS PRODUCTIVOS Y SOCIALES.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Actividad física"
+        },
+        {
+          "codigo": "37802",
+          "nombre": "DESARROLLAR PROCESOS DE COMUNICACIÓN EFICACES Y EFECTIVOS, TENIENDO EN CUENTA SITUACIONES  DE ORDEN SOCIAL, PERSONAL Y PRODUCTIVO.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Comunicación"
+        },
+        {
+          "codigo": "38558",
+          "nombre": "Ejercer derechos fundamentales del trabajo en el marco de la constitución política y los convenios internacionales.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Derechos fundamentales"
+        },
+        {
+          "codigo": "36180",
+          "nombre": "Enrique Low Murtra-Interactuar en el contexto productivo y social de acuerdo con principios  éticos para la construcción de una cultura de paz.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Ética / Cultura de paz"
+        },
+        {
+          "codigo": "38561",
+          "nombre": "Gestionar procesos propios de la cultura emprendedora y empresarial de acuerdo con el perfil personal y los requerimientos de los contextos productivo y social.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Cultura emprendedora"
+        },
+        {
+          "codigo": "38560",
+          "nombre": "Razonar cuantitativamente frente a situaciones susceptibles de ser abordadas de manera matemática en contextos laborales, sociales y personales.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Matemáticas"
+        },
+        {
+          "codigo": "38199",
+          "nombre": "Orientar investigación formativa según referentes técnicos",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Investigación"
+        },
+        {
+          "codigo": "37371",
+          "nombre": "Utilizar herramientas informáticas de acuerdo con las necesidades de manejo de información",
+          "horas_planeadas": 48,
+          "nombre_limpio": "TIC"
+        },
+        {
+          "codigo": "36182",
+          "nombre": "Resultado de Aprendizaje de la Inducción.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Inducción"
+        }
+      ]
+    },
+    "Implementación de Infraestructura de TICs": {
+      "codigo": "228116",
+      "competencias": [
+        {
+          "codigo": "2",
+          "nombre": "RESULTADOS DE APRENDIZAJE ETAPA PRACTICA",
+          "horas_planeadas": 864,
+          "nombre_limpio": "Etapa Práctica"
+        },
+        {
+          "codigo": "36180",
+          "nombre": "Enrique Low Murtra-Interactuar en el contexto productivo y social de acuerdo con principios  éticos para la construcción de una cultura de paz.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Ética / Cultura de paz"
+        },
+        {
+          "codigo": "36182",
+          "nombre": "Resultado de Aprendizaje de la Inducción.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Inducción"
+        },
+        {
+          "codigo": "37371",
+          "nombre": "Utilizar herramientas informáticas de acuerdo con las necesidades de manejo de información",
+          "horas_planeadas": 48,
+          "nombre_limpio": "TIC"
+        },
+        {
+          "codigo": "37714",
+          "nombre": "INTERACTUAR EN LENGUA INGLESA DE FORMA ORAL Y ESCRITA DENTRO DE CONTEXTOS SOCIALES Y LABORALES SEGÚN LOS CRITERIOS ESTABLECIDOS POR EL MARCO COMÚN EUROPEO DE REFERENCIA PARA LAS LENGUAS.",
+          "horas_planeadas": 384,
+          "nombre_limpio": "Inglés"
+        },
+        {
+          "codigo": "37752",
+          "nombre": "Mantener equipos de cómputo según procedimiento técnico",
+          "horas_planeadas": 384,
+          "nombre_limpio": "Mantenimiento equipos de cómputo"
+        },
+        {
+          "codigo": "37799",
+          "nombre": "APLICAR PRÁCTICAS  DE PROTECCIÓN AMBIENTAL, SEGURIDAD Y SALUD EN EL TRABAJO DE ACUERDO CON LAS POLÍTICAS ORGANIZACIONALES  Y LA NORMATIVIDAD VIGENTE.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Protección salud y ambiente"
+        },
+        {
+          "codigo": "37800",
+          "nombre": "GENERAR HÁBITOS SALUDABLES DE VIDA MEDIANTE LA APLICACIÓN DE PROGRAMAS DE ACTIVIDAD FÍSICA EN LOS CONTEXTOS PRODUCTIVOS Y SOCIALES.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Actividad física"
+        },
+        {
+          "codigo": "37801",
+          "nombre": "APLICACIÓN DE CONOCIMIENTOS DE LAS CIENCIAS NATURALES DE ACUERDO CON SITUACIONES DEL CONTEXTO PRODUCTIVO Y SOCIAL.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Ciencias naturales"
+        },
+        {
+          "codigo": "37802",
+          "nombre": "DESARROLLAR PROCESOS DE COMUNICACIÓN EFICACES Y EFECTIVOS, TENIENDO EN CUENTA SITUACIONES  DE ORDEN SOCIAL, PERSONAL Y PRODUCTIVO.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Comunicación"
+        },
+        {
+          "codigo": "37917",
+          "nombre": "Establecer requisitos de infraestructura tecnológica de acuerdo con procedimientos y estándares técnicos",
+          "horas_planeadas": 192,
+          "nombre_limpio": "Requisitos infraestructura TI"
+        },
+        {
+          "codigo": "38199",
+          "nombre": "Orientar investigación formativa según referentes técnicos",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Investigación"
+        },
+        {
+          "codigo": "38497",
+          "nombre": "IMPLEMENTAR LA RED FÍSICA DE DATOS SEGÚN DISEÑO Y ESTÁNDARES TÉCNICOS.",
+          "horas_planeadas": 528,
+          "nombre_limpio": "Implementación red de datos"
+        },
+        {
+          "codigo": "38500",
+          "nombre": "CONFIGURAR DISPOSITIVOS DE CÓMPUTO DE ACUERDO CON ESPECIFICACIONES DEL DISEÑO Y PROTOCOLOS TÉCNICOS",
+          "horas_planeadas": 336,
+          "nombre_limpio": "Configuración dispositivos TI"
+        },
+        {
+          "codigo": "38527",
+          "nombre": "TRABAJAR EN ALTURAS DE ACUERDO CON NORMATIVA DE SEGURIDAD Y SALUD EN EL TRABAJO",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Trabajo en alturas"
+        },
+        {
+          "codigo": "38558",
+          "nombre": "Ejercer derechos fundamentales del trabajo en el marco de la constitución política y los convenios internacionales.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Derechos fundamentales"
+        },
+        {
+          "codigo": "38560",
+          "nombre": "Razonar cuantitativamente frente a situaciones susceptibles de ser abordadas de manera matemática en contextos laborales, sociales y personales.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Matemáticas"
+        },
+        {
+          "codigo": "38561",
+          "nombre": "Gestionar procesos propios de la cultura emprendedora y empresarial de acuerdo con el perfil personal y los requerimientos de los contextos productivo y social.",
+          "horas_planeadas": 48,
+          "nombre_limpio": "Cultura emprendedora"
+        },
+        {
+          "codigo": "38887",
+          "nombre": "Controlar el centro de datos de acuerdo con procedimiento técnico y estándares",
+          "horas_planeadas": 432,
+          "nombre_limpio": "Centro de datos"
+        },
+        {
+          "codigo": "39431",
+          "nombre": "Montar instalaciones eléctricas internas de acuerdo con normativa",
+          "horas_planeadas": 288,
+          "nombre_limpio": "Instalaciones eléctricas"
+        }
+      ]
+    }
+  }
+}

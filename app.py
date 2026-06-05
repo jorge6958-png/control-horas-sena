@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 from utils import (
-    parsear_pdf, procesar_reporte, asignar_competencias,
-    construir_tabla_competencias, construir_tabla_instructores,
-    RUTA_PDF_DEFAULT, NOMBRES_LIMPIEZA
+    cargar_competencias, listar_programas,
+    procesar_reporte, asignar_competencias,
+    construir_tabla_competencias, construir_tabla_instructores
 )
 import os
 
@@ -20,59 +19,58 @@ st.markdown("---")
 
 # ─── SIDEBAR ───────────────────────────────────────────────
 with st.sidebar:
-    st.header("📂 Cargar archivos")
+    st.header("⚙️ Configuración")
 
-    pdf_file = st.file_uploader("PDF del programa de formación", type=["pdf"])
-    xls_file = st.file_uploader("Reporte XLS / CSV", type=["xls", "xlsx", "csv"])
+    programa = st.selectbox(
+        "Programa de Formación",
+        options=listar_programas(),
+        index=0,
+    )
 
-    usar_pdf_default = st.checkbox(
-        "Usar PDF precargado",
-        value=os.path.exists(RUTA_PDF_DEFAULT)
+    st.markdown("---")
+    st.subheader("📂 Cargar archivos")
+
+    xls_file = st.file_uploader(
+        "Reporte de Instructores por Ficha (XLS/CSV)",
+        type=["xls", "xlsx", "csv"],
     )
 
     procesar = st.button("🔍 Procesar", type="primary")
 
-# ─── PROCESAMIENTO ─────────────────────────────────────────
+# ─── VALIDACIÓN ────────────────────────────────────────────
 if not procesar:
     st.info(
-        "\U0001f448 Carga un **PDF del programa de formación** y un **reporte XLS/CSV** "
-        "en el panel lateral, luego haz clic en **Procesar**."
+        "\U0001f448 Selecciona un programa y carga el reporte de instructores, "
+        "luego haz clic en **Procesar**."
     )
     st.stop()
 
-if pdf_file:
-    pdf_path = os.path.join("/tmp", pdf_file.name)
-    with open(pdf_path, "wb") as f:
-        f.write(pdf_file.getbuffer())
-    df_pdf = parsear_pdf(pdf_path)
-    st.sidebar.success(f"✅ PDF cargado: {pdf_file.name}")
-elif usar_pdf_default and os.path.exists(RUTA_PDF_DEFAULT):
-    df_pdf = parsear_pdf(RUTA_PDF_DEFAULT)
-    st.sidebar.success("✅ PDF precargado")
-else:
-    st.error("Carga un PDF del programa de formación o activa el precargado.")
+if not xls_file:
+    st.error("Carga el reporte de instructores.")
     st.stop()
 
-if xls_file:
+# ─── CARGA DE COMPETENCIAS ────────────────────────────────
+df_competencias = cargar_competencias(programa)
+st.sidebar.success(f"✅ Programa: {programa}")
+
+# ─── PROCESAR REPORTE ─────────────────────────────────────
+with st.spinner("Procesando reporte de instructores..."):
     xls_path = os.path.join("/tmp", xls_file.name)
     with open(xls_path, "wb") as f:
         f.write(xls_file.getbuffer())
     df_detalle, info_ficha = procesar_reporte(xls_path)
-    st.sidebar.success(f"✅ Reporte cargado: {xls_file.name}")
-else:
-    st.error("Carga un reporte XLS/CSV.")
-    st.stop()
+    df_detalle = asignar_competencias(df_detalle, df_competencias)
+    df_comp = construir_tabla_competencias(df_detalle, df_competencias)
+    df_instr = construir_tabla_instructores(df_detalle)
 
-df_detalle = asignar_competencias(df_detalle, df_pdf)
-df_comp = construir_tabla_competencias(df_detalle, df_pdf)
-df_instr = construir_tabla_instructores(df_detalle)
+st.sidebar.success(f"✅ Reporte: {xls_file.name}")
 
 # ─── INFO DE LA FICHA ────────────────────────────────────
 col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric("Código Ficha", info_ficha.get("Código Ficha", "—"))
 with col2:
-    st.metric("Programa", info_ficha.get("Nombre Programa", "—"))
+    st.metric("Programa", info_ficha.get("Nombre Programa", programa))
 with col3:
     st.metric("Centro", info_ficha.get("Centro", "—"))
 with col4:
@@ -82,7 +80,7 @@ st.markdown("---")
 
 # ─── INDICADOR GENERAL ────────────────────────────────────
 df_comp_lectiva = df_comp[
-    ~df_comp["competencia"].str.contains("ETAPA PRÁCTICA", case=False)
+    ~df_comp["nombre"].str.contains("ETAPA PRÁCTICA", case=False)
 ]
 plan_total = df_comp_lectiva["horas_planeadas"].sum()
 rep_total = df_comp_lectiva["horas_reportadas"].sum()
@@ -167,7 +165,7 @@ st.dataframe(
 st.subheader("📈 Comparativo planeado vs reportado")
 
 df_chart = df_comp[
-    ~df_comp["competencia"].str.contains("ETAPA PRÁCTICA", case=False)
+    ~df_comp["nombre"].str.contains("ETAPA PRÁCTICA", case=False)
 ].copy()
 df_chart["competencia_display"] = df_chart["nombre_limpio"]
 df_chart = df_chart.sort_values("horas_planeadas", ascending=True)
@@ -257,7 +255,7 @@ for _, row in competencias_incompletas.iterrows():
     )
 
 competencias_sin_reporte = df_comp[
-    (df_comp["porcentaje"] == 0) & (~df_comp["competencia"].str.contains("ETAPA PRÁCTICA", case=False))
+    (df_comp["porcentaje"] == 0) & (~df_comp["nombre"].str.contains("ETAPA PRÁCTICA", case=False))
 ]
 for _, row in competencias_sin_reporte.iterrows():
     alertas.append(
@@ -281,7 +279,7 @@ else:
 # ─── FOOTER ───────────────────────────────────────────────
 st.markdown("---")
 st.caption(
-    f"📊 Reporte procesado: {xls_file.name} | "
+    f"📊 Programa: {programa} | Reporte: {xls_file.name} | "
     f"{len(df_comp_lectiva)} competencias, "
     f"{total_instructores} instructores"
 )
